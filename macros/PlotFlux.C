@@ -1,6 +1,9 @@
 {
   //The flux comes from here:
   //https://www-boone.fnal.gov/for_physicists/data_release/flux/pospolarity_fluxes.dat
+  // This macro takes the miniboone data release flux and plots it in the same format 
+  // as the flux in the root files, saving theas the same names for use in 
+  // other macros easily. 
 
   TCanvas* c = new TCanvas("c","c",0,0,700,700);
   c->SetLogy();

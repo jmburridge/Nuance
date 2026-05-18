@@ -197,12 +197,12 @@ void extract_crosssection(const char* filename = "../output/root/first_test_run/
     hXsec_nue    ->Draw("HIST SAME");
     hXsec_nuebar ->Draw("HIST SAME");
     c->BuildLegend();
-    c->SaveAs("xsec_plot.png");
+    c->SaveAs("macro_outputs/xsec_plot.png");
 
     // ------------------------------------------------------------------ //
     //  Step 7 -- save output histograms to a new ROOT file
     // ------------------------------------------------------------------ //
-    TFile* fOut = TFile::Open("xsec_output.root", "RECREATE");
+    TFile* fOut = TFile::Open("macro_outputs/xsec_output.root", "RECREATE");
 
     // raw event counts (useful for debugging)
     hEvt_numu   ->Write("hEvt_numu");
