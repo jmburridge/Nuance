@@ -1,0 +1,1 @@
+This folder contains ratio plots for the h1000700* and h999999* histograms in the "First_test_run" and "Second_test_run" combined files. The factor of 0.63 is explained by the relative number of files that were copmbined for each file.  
