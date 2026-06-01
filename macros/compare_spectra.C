@@ -8,7 +8,7 @@
 //
 // Usage: root -l compare_spectra.C
 
-void compare_spectra(const char* filename = "../output/root/first_test_run/combined/NUANCE_events.root")
+void compare_spectra(const char* filename = "/exp/uboone/data/users/jburridg/Nuance/NUANCE/NUANCE_event_files/output/root/first_test_run/combined/NUANCE_events.root")
 {
     TFile* f = TFile::Open(filename);
     if (!f || f->IsZombie()) {

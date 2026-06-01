@@ -5,7 +5,7 @@
 void integrate() {
 
     //1. Open the ROOT file 
-    TFile *f = TFile::Open("../output/root/first_test_run/combined/NUANCE_events.root");
+    TFile *f = TFile::Open("/exp/uboone/data/users/jburridg/Nuance/NUANCE/NUANCE_event_files/output/root/first_test_run/combined/NUANCE_events.root");
     if (!f || f->IsZombie()) {
         std::cerr << "Error: cannot open file!" << std::endl;
         return;

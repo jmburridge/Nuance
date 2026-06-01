@@ -4,7 +4,7 @@
 #include <map>
 #include <iostream>
 
-void plotccqe(const char* filename = "../output/root/sixth_test_run/combined/NUANCE_events_6.root")
+void plotccqe(const char* filename = "/exp/uboone/data/users/jburridg/Nuance/NUANCE/NUANCE_event_files/output/root/PoT_Nuance_event_files/combined/combined_nuance_events_1.root")
 {// change this to a -secs file for known pot
 
     //////////////////////////////////////////////////////////////////////// //
@@ -15,8 +15,9 @@ void plotccqe(const char* filename = "../output/root/sixth_test_run/combined/NUA
     //////////////////////////////////////////////////////////////////////// //
     Float_t secs_per_file = 1e10; //need to get this from the -secs file; total -secs exposre is the pot.
     Float_t pot_per_sec = 1.17e6;
-    Float_t num_files = 317; //need to get this from the -secs file; total number of files is the number of files that were hadd'd together.
-    Float_t scale_factor = pot_per_sec*secs_per_file * num_files; //this is the factor we need to divide the event numbers by to get the actual event rates. 
+    Float_t num_files = 2716; //need to get this from the -secs file; total number of files is the number of files that were hadd'd together.
+    Float_t N_target = 1.113e31; //number of target nucleons in the detector, needed to get cross section from rate.
+    Float_t scale_factor = pot_per_sec * secs_per_file * num_files; //this is the factor we need to divide the event numbers by to get the actual event rates. 
     std::cout << "Scale factor: " << scale_factor << std::endl;
     // ------------------------------------------------------------------ //
     //  Open file
@@ -88,13 +89,30 @@ void plotccqe(const char* filename = "../output/root/sixth_test_run/combined/NUA
     h3->SetBranchAddress("channel",    &channel);
 
     // ------------------------------------------------------------------ //
+    //  Custom variable-width bin edges (GeV)
+    // ------------------------------------------------------------------ //
+    const Double_t binEdges[] = {
+        0.125, 0.180, 0.240, 0.300, 0.350, 0.425, 0.480, 0.540, 0.600,
+        0.655, 0.755, 0.785, 0.845, 0.900, 0.955, 1.025, 1.085, 1.145,
+        1.200, 1.270, 1.320, 1.380, 1.435, 1.500, 1.560, 1.620, 1.680,
+        1.740, 1.800, 1.860, 1.920, 1.980, 2.050, 2.100, 2.166, 2.225,
+        2.280, 2.340, 2.400, 2.460, 2.525, 2.575, 2.600, 2.650, 2.700,
+        2.750, 2.800, 2.850, 2.900, 2.950, 3.000, 3.050, 3.100, 3.150,
+        3.200, 3.250, 3.300, 3.350, 3.400, 3.450, 3.500, 3.550, 3.600,
+        3.650, 3.700, 3.750, 3.800
+    };
+    const Int_t nBins = sizeof(binEdges)/sizeof(binEdges[0]) - 1; // 65 bins
+
+    // ------------------------------------------------------------------ //
     //  Step 6: plot the Numu/Numubar/Nue/Nuebar CCQE rates.
     //           this is for comparison with Fig. 6.5 in Jens thesis. 
     // ------------------------------------------------------------------ //
-    TH1D* hRate_numu    =  new TH1D("hRate_numu", "CCQE Rate for Numu;Neutrino Energy (GeV); Event Rate [#nu/PoT/50 MeV]", 200, 0, 10);
-    TH1D* hRate_numubar =  new TH1D("hRate_numubar", "CCQE Rate for Numubar;Neutrino Energy (GeV);Event Rate [#nu/PoT/50 MeV]", 200, 0, 10);
-    TH1D* hRate_nue     =  new TH1D("hRate_nue", "CCQE Rate for Nue;Neutrino Energy (GeV);Event Rate [#nu/PoT/50 MeV]", 200, 0, 10);
-    TH1D* hRate_nuebar  =  new TH1D("hRate_nuebar", "CCQE Rate for Nuebar;Neutrino Energy (GeV);Event Rate [#nu/PoT/50 MeV]", 200, 0, 10);
+     
+    TH1D* hRate_numu    = new TH1D("hRate_numu",    "CCQE Rate for Numu;Neutrino Energy (GeV);Event Rate [#nu/PoT/GeV]",    nBins, binEdges);
+    TH1D* hRate_numubar = new TH1D("hRate_numubar", "CCQE Rate for Numubar;Neutrino Energy (GeV);Event Rate [#nu/PoT/GeV]", nBins, binEdges);
+    TH1D* hRate_nue     = new TH1D("hRate_nue",     "CCQE Rate for Nue;Neutrino Energy (GeV);Event Rate [#nu/PoT/GeV]",     nBins, binEdges);
+    TH1D* hRate_nuebar  = new TH1D("hRate_nuebar",  "CCQE Rate for Nuebar;Neutrino Energy (GeV);Event Rate [#nu/PoT/GeV]",  nBins, binEdges);
+
 
     Int_t   ccqe_events_filled = 0; //counter to keep track of how many ccqe events we fill in total.
 
@@ -146,6 +164,14 @@ void plotccqe(const char* filename = "../output/root/sixth_test_run/combined/NUA
     hXsec_nue    ->Divide(hFlux_nue);
     hXsec_nuebar ->Divide(hFlux_nuebar);
 
+    //now scale by /nucleon:
+    for (int i = 1; i <= hXsec_numu->GetNbinsX(); i++) {
+        hXsec_numu   ->SetBinContent(i, hXsec_numu->GetBinContent(i) / N_target);
+        hXsec_numubar->SetBinContent(i, hXsec_numubar->GetBinContent(i) / N_target);
+        hXsec_nue    ->SetBinContent(i, hXsec_nue->GetBinContent(i) / N_target);
+        hXsec_nuebar ->SetBinContent(i, hXsec_nuebar->GetBinContent(i) / N_target);
+    }
+    
     //draw canvas 
     TCanvas* c1 = new TCanvas("c1", "Cross Sections", 800, 600);
     //draw histograms with different colors

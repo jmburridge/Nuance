@@ -34,7 +34,7 @@
 static const Float_t CM2_TO_PB = 1; //1.0e36; //levae this be. 
 static const Float_t POT = 1;//1.0e20; // protons on target for this run
 
-void extract_crosssection(const char* filename = "../output/root/first_test_run/combined/NUANCE_events.root")
+void extract_crosssection(const char* filename = "/exp/uboone/data/users/jburridg/Nuance/NUANCE/NUANCE_event_files/output/root/first_test_run/combined/NUANCE_events.root")
 {
     // ------------------------------------------------------------------ //
     //  Open file

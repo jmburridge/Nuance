@@ -7,7 +7,7 @@
 
 void plot_histograms() {
 
-    TFile* f = TFile::Open("../output/root/first_test_run/uncombined/events_2.root");
+    TFile* f = TFile::Open("/exp/uboone/data/users/jburridg/Nuance/NUANCE/NUANCE_event_files/output/root/first_test_run/uncombined/events_2.root");
     if (!f || f->IsZombie()) {
         std::cerr << "Error: Cannot open file." << std::endl;
         return;
