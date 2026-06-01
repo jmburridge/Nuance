@@ -15,7 +15,7 @@ void plotccqe(const char* filename = "/exp/uboone/data/users/jburridg/Nuance/NUA
     //////////////////////////////////////////////////////////////////////// //
     Float_t secs_per_file = 1e10; //need to get this from the -secs file; total -secs exposre is the pot.
     Float_t pot_per_sec = 1.17e6;
-    Float_t num_files = 2716; //need to get this from the -secs file; total number of files is the number of files that were hadd'd together.
+    Int_t num_files = 2032; //need to get this from the -secs file; total number of files is the number of files that were hadd'd together.
     Float_t N_target = 1.113e31; //number of target nucleons in the detector, needed to get cross section from rate.
     Float_t scale_factor = pot_per_sec * secs_per_file * num_files; //this is the factor we need to divide the event numbers by to get the actual event rates. 
     std::cout << "Scale factor: " << scale_factor << std::endl;
@@ -99,7 +99,12 @@ void plotccqe(const char* filename = "/exp/uboone/data/users/jburridg/Nuance/NUA
         2.280, 2.340, 2.400, 2.460, 2.525, 2.575, 2.600, 2.650, 2.700,
         2.750, 2.800, 2.850, 2.900, 2.950, 3.000, 3.050, 3.100, 3.150,
         3.200, 3.250, 3.300, 3.350, 3.400, 3.450, 3.500, 3.550, 3.600,
-        3.650, 3.700, 3.750, 3.800
+        3.650, 3.700, 3.750, 3.800, 3.850, 3.900, 3.950, 4.000, 4.050, 
+        4.100, 4.150, 4.200, 4.250, 4.300, 4.350, 4.400, 4.450, 4.500, 
+        4.550, 4.600, 4.650, 4.700, 4.750, 4.800, 4.850, 4.900, 4.950, 
+        5.000, 5.050, 5.100, 5.150, 5.200, 5.250, 5.300, 5.350, 5.400, 
+        5.450, 5.500, 5.550, 5.600, 5.650, 5.700, 5.750, 5.800, 5.850,
+         5.900, 5.950, 6.000
     };
     const Int_t nBins = sizeof(binEdges)/sizeof(binEdges[0]) - 1; // 65 bins
 
@@ -108,11 +113,14 @@ void plotccqe(const char* filename = "/exp/uboone/data/users/jburridg/Nuance/NUA
     //           this is for comparison with Fig. 6.5 in Jens thesis. 
     // ------------------------------------------------------------------ //
      
-    TH1D* hRate_numu    = new TH1D("hRate_numu",    "CCQE Rate for Numu;Neutrino Energy (GeV);Event Rate [#nu/PoT/GeV]",    nBins, binEdges);
-    TH1D* hRate_numubar = new TH1D("hRate_numubar", "CCQE Rate for Numubar;Neutrino Energy (GeV);Event Rate [#nu/PoT/GeV]", nBins, binEdges);
-    TH1D* hRate_nue     = new TH1D("hRate_nue",     "CCQE Rate for Nue;Neutrino Energy (GeV);Event Rate [#nu/PoT/GeV]",     nBins, binEdges);
-    TH1D* hRate_nuebar  = new TH1D("hRate_nuebar",  "CCQE Rate for Nuebar;Neutrino Energy (GeV);Event Rate [#nu/PoT/GeV]",  nBins, binEdges);
-
+    TH1D* hRate_numu    = new TH1D("hRate_numu",    "CCQE Rate for Numu;Neutrino Energy (GeV);Event Rate [#nu/PoT/50 MeV]",    nBins, binEdges);
+    TH1D* hRate_numubar = new TH1D("hRate_numubar", "CCQE Rate for Numubar;Neutrino Energy (GeV);Event Rate [#nu/PoT/50 MeV]", nBins, binEdges);
+    TH1D* hRate_nue     = new TH1D("hRate_nue",     "CCQE Rate for Nue;Neutrino Energy (GeV);Event Rate [#nu/PoT/50 MeV]",     nBins, binEdges);
+    TH1D* hRate_nuebar  = new TH1D("hRate_nuebar",  "CCQE Rate for Nuebar;Neutrino Energy (GeV);Event Rate [#nu/PoT/50 MeV]",  nBins, binEdges);
+    TH1D* hXsec_numu    = new TH1D("hXsec_numu",    "CCQE Cross Section for Numu;Neutrino Energy (GeV);Cross Section (cm^{2})", 200, 0, 10);
+    TH1D* hXsec_numubar = new TH1D("hXsec_numubar", "CCQE Cross Section for Numubar;Neutrino Energy (GeV);Cross Section (cm^{2})", 200, 0, 10);
+    TH1D* hXsec_nue     = new TH1D("hXsec_nue",     "CCQE Cross Section for Nue;Neutrino Energy (GeV);Cross Section (cm^{2})", 200, 0, 10);
+    TH1D* hXsec_nuebar  = new TH1D("hXsec_nuebar",  "CCQE Cross Section for Nuebar;Neutrino Energy (GeV);Cross Section (cm^{2})", 200, 0, 10);
 
     Int_t   ccqe_events_filled = 0; //counter to keep track of how many ccqe events we fill in total.
 
@@ -125,12 +133,16 @@ void plotccqe(const char* filename = "/exp/uboone/data/users/jburridg/Nuance/NUA
         if (channel == 1) { //only want CCQE events.
             if (neutrino == 14) { //filling Numu
                 hRate_numu->Fill(energy/1000); //convert energy to GeV for plotting
+                hXsec_numu->Fill(energy/1000); //convert energy to GeV for plotting
             } else if (neutrino == -14) { //filling Numubar
-                hRate_numubar->Fill(energy/1000); //convert energy to GeV for plotting      
+                hRate_numubar->Fill(energy/1000); //convert energy to GeV for plotting
+                hXsec_numubar->Fill(energy/1000); //convert energy to GeV for plotting
             } else if (neutrino == 12) { //filling Nue
                 hRate_nue->Fill(energy/1000); //convert energy to GeV for plotting
+                hXsec_nue->Fill(energy/1000); //convert energy to GeV for plotting
             } else if (neutrino == -12) { //filling Nuebar
                 hRate_nuebar->Fill(energy/1000); //convert energy to GeV for plotting
+                hXsec_nuebar->Fill(energy/1000); //convert energy to GeV for plotting
             }
             // add counter for ccqe events filled
             ccqe_events_filled++;
@@ -141,22 +153,41 @@ void plotccqe(const char* filename = "/exp/uboone/data/users/jburridg/Nuance/NUA
 
    
 
-    //Divide by bin width and scale factor to get actual event rates per MeV for RATES histograms:
-    for (int i = 1; i <= hRate_numu->GetNbinsX(); i++) {
-        double binWidth = hRate_numu->GetBinWidth(i);
-        hRate_numu   ->SetBinContent(i, hRate_numu->GetBinContent(i) / (binWidth * scale_factor));
-        hRate_numubar->SetBinContent(i, hRate_numubar->GetBinContent(i) / (binWidth * scale_factor));
-        hRate_nue    ->SetBinContent(i, hRate_nue->GetBinContent(i) / (binWidth * scale_factor));
-        hRate_nuebar ->SetBinContent(i, hRate_nuebar->GetBinContent(i) / (binWidth * scale_factor));
-    }
+    ///////////////////////////////////////////////////////////////////////////
+// Convert event counts to events / POT / 50 MeV
+//
+// Each variable-width bin contains:
+//
+//    N_events
+//
+// We want:
+//
+//    N_events / ( POT × (ΔE/50MeV) )
+//
+// where ΔE is the bin width in GeV.
+//
+// Since 50 MeV = 0.05 GeV:
+//
+//    N_events / ( POT × ΔE/0.05 )
+//
+//////////////////////////////////////////////////////////////////////////
+
+const double fiftyMeV = 0.05; // GeV
+
+for (int i = 1; i <= hRate_numu->GetNbinsX(); i++) {
+
+    double widthGeV = hRate_numu->GetBinWidth(i);
+    double widthIn50MeVBins = widthGeV /fiftyMeV;
+    double norm = scale_factor * widthIn50MeVBins;
+
+    hRate_numu->SetBinContent(i,hRate_numu->GetBinContent(i) / norm);
+    hRate_numubar->SetBinContent(i,hRate_numubar->GetBinContent(i) / norm);
+    hRate_nue->SetBinContent(i,hRate_nue->GetBinContent(i) / norm);
+    hRate_nuebar->SetBinContent(i,hRate_nuebar->GetBinContent(i) / norm);
+}
 
     //copy rates histograms to new histograms for cross sections, which we will get by dividing the rates by the flux:
     //rename the axes 
-
-    TH1D* hXsec_numu    = (TH1D*)hRate_numu->Clone("hXsec_numu");
-    TH1D* hXsec_numubar = (TH1D*)hRate_numubar->Clone("hXsec_numubar");
-    TH1D* hXsec_nue     = (TH1D*)hRate_nue->Clone("hXsec_nue");
-    TH1D* hXsec_nuebar  = (TH1D*)hRate_nuebar->Clone("hXsec_nuebar");
 
     //Divide by flux to get cross secion in units of cm^-2 for XSEC histograms:
     hXsec_numu   ->Divide(hFlux_numu);
