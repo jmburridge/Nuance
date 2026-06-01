@@ -117,10 +117,10 @@ void plotccqe(const char* filename = "/exp/uboone/data/users/jburridg/Nuance/NUA
     TH1D* hRate_numubar = new TH1D("hRate_numubar", "CCQE Rate for Numubar;Neutrino Energy (GeV);Event Rate [#nu/PoT/50 MeV]", nBins, binEdges);
     TH1D* hRate_nue     = new TH1D("hRate_nue",     "CCQE Rate for Nue;Neutrino Energy (GeV);Event Rate [#nu/PoT/50 MeV]",     nBins, binEdges);
     TH1D* hRate_nuebar  = new TH1D("hRate_nuebar",  "CCQE Rate for Nuebar;Neutrino Energy (GeV);Event Rate [#nu/PoT/50 MeV]",  nBins, binEdges);
-    TH1D* hXsec_numu    = new TH1D("hXsec_numu",    "CCQE Cross Section for Numu;Neutrino Energy (GeV);Cross Section (cm^{2})", 200, 0, 10);
-    TH1D* hXsec_numubar = new TH1D("hXsec_numubar", "CCQE Cross Section for Numubar;Neutrino Energy (GeV);Cross Section (cm^{2})", 200, 0, 10);
-    TH1D* hXsec_nue     = new TH1D("hXsec_nue",     "CCQE Cross Section for Nue;Neutrino Energy (GeV);Cross Section (cm^{2})", 200, 0, 10);
-    TH1D* hXsec_nuebar  = new TH1D("hXsec_nuebar",  "CCQE Cross Section for Nuebar;Neutrino Energy (GeV);Cross Section (cm^{2})", 200, 0, 10);
+    TH1D* hXsec_numu    = new TH1D("hXsec_numu",    "CCQE Cross Section for Numu;Neutrino Energy (GeV);Cross Section (cm^{2}/nucleon)", 200, 0, 10);
+    TH1D* hXsec_numubar = new TH1D("hXsec_numubar", "CCQE Cross Section for Numubar;Neutrino Energy (GeV);Cross Section (cm^{2}/nucleon)", 200, 0, 10);
+    TH1D* hXsec_nue     = new TH1D("hXsec_nue",     "CCQE Cross Section for Nue;Neutrino Energy (GeV);Cross Section (cm^{2}/nucleon)", 200, 0, 10);
+    TH1D* hXsec_nuebar  = new TH1D("hXsec_nuebar",  "CCQE Cross Section for Nuebar;Neutrino Energy (GeV);Cross Section (cm^{2}/nucleon)", 200, 0, 10);
 
     Int_t   ccqe_events_filled = 0; //counter to keep track of how many ccqe events we fill in total.
 
@@ -179,11 +179,15 @@ for (int i = 1; i <= hRate_numu->GetNbinsX(); i++) {
     double widthGeV = hRate_numu->GetBinWidth(i);
     double widthIn50MeVBins = widthGeV /fiftyMeV;
     double norm = scale_factor * widthIn50MeVBins;
-
+    double xsbinwidth = hXsec_numu->GetBinWidth(i); //get the bin width for the xsec histograms, which are in 200 uniform bins from 0-10 GeV, so bin width is 0.05 GeV, but we'll get it programmatically just to be safe.
     hRate_numu->SetBinContent(i,hRate_numu->GetBinContent(i) / norm);
     hRate_numubar->SetBinContent(i,hRate_numubar->GetBinContent(i) / norm);
     hRate_nue->SetBinContent(i,hRate_nue->GetBinContent(i) / norm);
     hRate_nuebar->SetBinContent(i,hRate_nuebar->GetBinContent(i) / norm);
+    hXsec_numu->SetBinContent(i,hXsec_numu->GetBinContent(i) / (xsbinwidth*scale_factor));
+    hXsec_numubar->SetBinContent(i,hXsec_numubar->GetBinContent(i) / (xsbinwidth*scale_factor));
+    hXsec_nue->SetBinContent(i,hXsec_nue->GetBinContent(i) / (xsbinwidth*scale_factor));
+    hXsec_nuebar->SetBinContent(i,hXsec_nuebar->GetBinContent(i) / (xsbinwidth*scale_factor));
 }
 
     //copy rates histograms to new histograms for cross sections, which we will get by dividing the rates by the flux:
@@ -220,7 +224,7 @@ for (int i = 1; i <= hRate_numu->GetNbinsX(); i++) {
 
     //Draw Xsec canvas
     TCanvas* c2 = new TCanvas("c2", "Cross Sections", 800, 600);
-    //draw histograms with different colors
+   //draw histograms with different colors
     hXsec_numu   ->SetLineColor(kBlue);
     hXsec_numubar->SetLineColor(kRed);
     hXsec_nue    ->SetLineColor(kGreen);
@@ -229,6 +233,11 @@ for (int i = 1; i <= hRate_numu->GetNbinsX(); i++) {
     hXsec_numubar->Draw("HIST SAME");
     hXsec_nue    ->Draw("HIST SAME");
     hXsec_nuebar ->Draw("HIST SAME");
+    //set maximum at 1e-35:
+    //sext x axis maximum to 5 GeV:
+    hXsec_numu   ->GetXaxis()->SetRangeUser(0, 5);
+
+
     //relabel the axes
     hXsec_numu   ->GetXaxis()->SetTitle("Energy (GeV)");
     hXsec_numu   ->GetYaxis()->SetTitle("Cross Section (cm^{2})");
