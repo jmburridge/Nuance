@@ -1,0 +1,4 @@
+/exp/uboone/data/users/jburridg/Nuance/NUANCE/NUANCE_event_files/output/root/PoT_Nuance_event_files/sixth_test_run/uncombined//events_441.root
+/exp/uboone/data/users/jburridg/Nuance/NUANCE/NUANCE_event_files/output/root/PoT_Nuance_event_files/sixth_test_run/uncombined//events_440.root
+/exp/uboone/data/users/jburridg/Nuance/NUANCE/NUANCE_event_files/output/root/PoT_Nuance_event_files/sixth_test_run/uncombined//events_438.root
+/exp/uboone/data/users/jburridg/Nuance/NUANCE/NUANCE_event_files/output/root/PoT_Nuance_event_files/sixth_test_run/uncombined//events_10.root
